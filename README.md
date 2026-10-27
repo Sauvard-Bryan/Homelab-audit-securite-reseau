@@ -1,15 +1,20 @@
 
 # Lab de sécurité réseau : audit et durcissement d'une infrastructure virtualisée
 
-![Linux](https://img.shields.io/badge/Linux-Débutant-green)
-![Réseaux](https://img.shields.io/badge/Réseaux-Débutant%20à%20Intermédiaire-blue)
-![Sécurité réseau](https://img.shields.io/badge/Sécurité%20réseau-Débutant-green)
-![Virtualisation](https://img.shields.io/badge/Virtualisation-Débutant%20à%20Intermédiaire-blue)
-![Audit et diagnostic](https://img.shields.io/badge/Audit%20et%20diagnostic-Débutant-green)
+## Compétences techniques
+
+![Linux](https://img.shields.io/badge/Linux-Niveau%202%20%7C%20Pratique-16A34A)
+![Virtualisation KVM](https://img.shields.io/badge/Virtualisation%20KVM-Niveau%202%20%7C%20Pratique-16A34A)
+![Réseaux IP](https://img.shields.io/badge/Réseaux%20IP-Niveau%202%20%7C%20Pratique-16A34A)
+![Windows Server](https://img.shields.io/badge/Windows%20Server-Niveau%202%20%7C%20Pratique-16A34A)
+![OPNsense](https://img.shields.io/badge/OPNsense-Niveau%202%20%7C%20Pratique-16A34A)
+![Sécurité réseau](https://img.shields.io/badge/Sécurité%20réseau-Niveau%201%20%7C%20Découverte-2563EB)
+![Nmap](https://img.shields.io/badge/Nmap-Niveau%201%20%7C%20Découverte-2563EB)
+![Audit et diagnostic](https://img.shields.io/badge/Audit%20et%20diagnostic-Niveau%201%20%7C%20Découverte-2563EB)
+
+<sub>Échelle : Niveau 1 — Découverte / Apprentissage · Niveau 2 — Pratique · Niveau 3 — Débutant · Niveau 4 — Intermédiaire · Niveau 5 — Expert</sub>
 
 **Statut :** Projet en préparation.
-
-Les niveaux indiqués correspondent aux compétences abordées dans le projet. Ils sont indicatifs et ne constituent pas une certification.
 
 ## Un deuxième projet pour découvrir la sécurité réseau
 
@@ -17,44 +22,48 @@ Ce projet fait suite à mon premier homelab, dans lequel j'ai découvert Linux, 
 
 Après avoir réussi à faire communiquer les différentes machines de mon laboratoire, je souhaite maintenant comprendre comment vérifier la sécurité de cette infrastructure.
 
-Ce que je connais avant de commencer :
+Ce que j'ai déjà découvert dans mon premier projet :
 
-- Linux : j'ai installé Debian et appris à utiliser quelques commandes pour gérer mon environnement.
-- Virtualisation : je sais créer et configurer des machines virtuelles avec KVM et Virt-Manager.
-- Réseau : j'ai découvert les adresses IP, les sous-réseaux, le DHCP, les passerelles et le routage.
-- OPNsense : je l'ai utilisé comme routeur et relais DHCP, mais je n'ai pas encore étudié en détail ses fonctions de pare-feu.
-- Sécurité réseau : je pars pratiquement de zéro. Je connais certains termes, mais je n'ai encore jamais réalisé d'audit.
+- Linux : installation de Debian et utilisation de commandes pour gérer mon environnement.
+- Virtualisation : création et configuration de machines virtuelles avec KVM et Virt-Manager.
+- Réseau : adresses IP, sous-réseaux, DHCP, passerelles et routage.
+- Windows Server : installation et configuration d'un serveur DHCP et DNS.
+- OPNsense : configuration du routage et du relais DHCP entre plusieurs sous-réseaux.
 
-Ce que je souhaite découvrir :
+Ces technologies ne sont donc plus totalement nouvelles pour moi. Je souhaite maintenant les réutiliser dans un contexte différent.
+
+Ce que je découvre avec ce deuxième projet :
 
 - Le fonctionnement des ports TCP et UDP.
 - Les services accessibles sur un réseau.
-- Les bases de l'utilisation de Nmap.
+- L'utilisation de Nmap.
 - L'analyse des communications entre plusieurs sous-réseaux.
-- Le fonctionnement des règles de pare-feu.
-- Les risques liés à une mauvaise configuration.
-- Les principes de durcissement d'une infrastructure.
-- La réalisation d'un rapport d'audit simple.
+- Les règles de filtrage d'un pare-feu.
+- Les risques liés aux configurations réseau.
+- Les principes de durcissement.
+- La réalisation d'un premier rapport d'audit.
 
-Comme pour mon premier projet, j'apprendrai progressivement à partir de documentation technique, de tutoriels et de recherches personnelles.
+J'apprends progressivement à partir de documentation technique, de tutoriels et de recherches personnelles.
 
-L'objectif n'est pas seulement de reproduire des commandes, mais de comprendre les résultats obtenus et les raisons des modifications effectuées.
+Comme pour mon premier homelab, je souhaite comprendre les manipulations réalisées, les problèmes rencontrés et les résultats obtenus, plutôt que de simplement reproduire des commandes.
 
 ## Objectif du projet
 
-Réaliser un premier audit de sécurité sur mon infrastructure virtualisée, identifier les services et communications accessibles, puis améliorer progressivement sa configuration.
+Réaliser un premier audit de sécurité sur mon infrastructure virtualisée, identifier les machines et les services accessibles, puis améliorer progressivement sa configuration.
 
-Le projet sera organisé autour de plusieurs questions :
+Le projet repose sur plusieurs questions :
 
 1. **Quelles machines et quels services sont accessibles sur mon réseau ?**
-2. **Quelles communications sont autorisées entre les sous-réseaux ?**
+2. **Quelles communications sont possibles entre les sous-réseaux ?**
 3. **Certaines configurations présentent-elles des risques ?**
 4. **Comment limiter les accès inutiles sans empêcher le réseau de fonctionner ?**
-5. **Comment vérifier que les corrections apportées sont efficaces ?**
+5. **Comment vérifier que les modifications apportées améliorent réellement la sécurité ?**
 
-Je souhaite réaliser un audit initial, appliquer les corrections nécessaires, puis effectuer de nouveaux tests pour comparer les résultats.
+Je souhaite réaliser un audit initial, appliquer les corrections nécessaires, puis reproduire les tests pour comparer les résultats.
 
-Ce projet est une initiation à la sécurité réseau, et non un audit professionnel complet.
+L'objectif est de découvrir une méthode simple d'analyse et de sécurisation d'une infrastructure réseau.
+
+Ce projet constitue une initiation à la sécurité réseau et non un audit professionnel complet.
 
 ## 1. Infrastructure de départ
 
@@ -67,10 +76,10 @@ L'infrastructure comprend trois machines virtuelles hébergées sur Debian avec 
 | VM | Système | Rôle |
 |---|---|---|
 | SERVER-DHCP | Windows Server 2022 | Serveur DHCP et DNS |
-| ROUTAGE | OPNsense | Routage et relais DHCP |
+| ROUTAGE | OPNsense | Routeur et relais DHCP |
 | COMPTA-DEVICE1 | Windows 11 | Poste client utilisé pour les tests |
 
-### Réseaux existants
+### Réseaux configurés
 
 | Réseau | Sous-réseau | Passerelle |
 |---|---|---|
@@ -78,43 +87,43 @@ L'infrastructure comprend trois machines virtuelles hébergées sur Debian avec 
 | Comptabilité | `192.168.2.0/24` | `192.168.2.1` |
 | Commercial | `192.168.3.0/24` | `192.168.3.1` |
 
-Le serveur Windows utilise l'adresse fixe `192.168.1.1`.
+Le serveur Windows conserve son adresse fixe `192.168.1.1`.
 
-OPNsense possède trois interfaces réseau et assure le routage entre les sous-réseaux.
+OPNsense dispose de trois interfaces réseau, une pour chaque sous-réseau.
 
-Le relais DHCP permet aux postes des réseaux Comptabilité et Commercial d'obtenir une adresse IP depuis le serveur Windows.
+Le relais DHCP permet aux postes des réseaux Comptabilité et Commercial de recevoir une adresse IP depuis le serveur Windows.
 
 ### Contraintes matérielles
 
 Mon PC hôte dispose de 8 Go de RAM.
 
-Lors du premier projet, j'avais donc utilisé un seul client Windows 11, déplacé successivement entre les réseaux Comptabilité et Commercial.
+Dans le premier projet, je n'avais donc pas créé plusieurs clients Windows. J'avais réutilisé la même VM, COMPTA-DEVICE1, en la connectant successivement aux réseaux Comptabilité et Commercial.
 
-Pour ce deuxième projet, je souhaite conserver une infrastructure adaptée aux ressources disponibles.
+Je souhaite conserver cette approche pour le deuxième projet.
 
-Une machine Linux dédiée à l'audit pourra être ajoutée si nécessaire. Le choix du système et des outils sera effectué après vérification des ressources et de la configuration actuelle.
+Une machine Linux dédiée aux tests pourra être ajoutée si nécessaire, selon les ressources disponibles.
 
 ## 2. Préparation de l'audit
 
-Avant d'effectuer des tests, je dois vérifier l'état de mon infrastructure et définir précisément ce que je souhaite analyser.
+Avant de commencer les tests, je dois vérifier que mon infrastructure fonctionne toujours et définir précisément ce que je souhaite analyser.
 
 ### Manipulations prévues
 
-- [ ] Vérifier le fonctionnement des VM existantes.
-- [ ] Identifier les réseaux virtuels configurés dans KVM.
-- [ ] Vérifier les adresses IP des machines.
-- [ ] Vérifier les communications réseau existantes.
-- [ ] Déterminer depuis quelle machine réaliser les tests.
+- [ ] Vérifier les machines virtuelles existantes.
+- [ ] Vérifier les réseaux virtuels configurés dans KVM.
+- [ ] Contrôler les adresses IP des machines.
+- [ ] Vérifier les communications réseau.
+- [ ] Déterminer depuis quelle machine effectuer les tests.
 - [ ] Définir le périmètre de l'audit.
 - [ ] Documenter l'architecture de départ.
 
-L'objectif de cette étape est de disposer d'un état initial fiable avant de commencer les analyses.
+Cette première étape doit me permettre de disposer d'un état initial fiable avant toute modification.
 
-## 3. Découverte des machines et des services
+## 3. Découverte des machines et des services avec Nmap
 
 Je souhaite commencer par comprendre comment identifier les équipements et les services accessibles sur un réseau.
 
-Pour cela, je prévois de découvrir **Nmap**, un outil permettant notamment d'analyser les ports et certains services réseau.
+Pour cela, je vais découvrir **Nmap**, un outil permettant notamment d'analyser les ports et certains services réseau.
 
 ### Questions à étudier
 
@@ -131,24 +140,24 @@ Pour cela, je prévois de découvrir **Nmap**, un outil permettant notamment d'a
 - [ ] Identifier les machines accessibles sur un sous-réseau.
 - [ ] Relever les ports ouverts sur les machines autorisées.
 - [ ] Identifier les services détectés.
-- [ ] Documenter et expliquer les résultats.
+- [ ] Documenter les commandes et leurs résultats.
 
 Les tests seront réalisés uniquement sur mes propres machines virtuelles.
 
-Un port ouvert ne signifie pas automatiquement qu'un système est vulnérable. Je chercherai à comprendre le rôle du service et la nécessité de son accessibilité.
+Un port ouvert ne constitue pas automatiquement une vulnérabilité. Je chercherai d'abord à comprendre le rôle du service et pourquoi il est accessible.
 
 ## 4. Analyse des communications entre sous-réseaux
 
-Mon premier projet m'a permis de mettre en place le routage entre les réseaux Serveur, Comptabilité et Commercial.
+Dans mon premier projet, j'ai configuré OPNsense pour permettre le routage entre les réseaux Serveur, Comptabilité et Commercial.
 
-Je souhaite maintenant vérifier quelles communications sont réellement possibles entre ces réseaux.
+Je souhaite maintenant comprendre quelles communications sont réellement possibles entre ces réseaux.
 
 ### Questions à étudier
 
 - Un poste du réseau Comptabilité peut-il accéder au réseau Commercial ?
 - Quels services du serveur Windows sont accessibles depuis les réseaux clients ?
-- Les communications observées sont-elles nécessaires ?
-- Le routage permet-il actuellement davantage d'accès que prévu ?
+- Toutes les communications autorisées sont-elles nécessaires ?
+- Certaines communications devraient-elles être limitées ?
 
 ### Manipulations prévues
 
@@ -158,13 +167,13 @@ Je souhaite maintenant vérifier quelles communications sont réellement possibl
 - [ ] Comparer les résultats selon le sous-réseau utilisé.
 - [ ] Documenter les communications autorisées et bloquées.
 
-Les résultats serviront de base à l'analyse des règles de pare-feu.
+Les résultats serviront de base à l'analyse du pare-feu OPNsense.
 
 ## 5. Découverte du pare-feu OPNsense
 
 J'ai déjà utilisé OPNsense pour le routage et le relais DHCP, mais je n'ai pas encore étudié précisément son fonctionnement en tant que pare-feu.
 
-Je souhaite comprendre comment ses règles peuvent contrôler les communications entre mes différents réseaux.
+Je souhaite découvrir comment ses règles permettent d'autoriser ou de bloquer les communications entre différents réseaux.
 
 ### Notions à découvrir
 
@@ -179,12 +188,12 @@ Je souhaite comprendre comment ses règles peuvent contrôler les communications
 
 - [ ] Examiner les règles existantes dans OPNsense.
 - [ ] Comprendre leur fonctionnement.
-- [ ] Identifier les communications réellement nécessaires.
+- [ ] Identifier les communications nécessaires.
 - [ ] Préparer des règles de filtrage adaptées.
-- [ ] Tester les règles progressivement.
-- [ ] Vérifier que le DHCP et les autres services nécessaires continuent de fonctionner.
+- [ ] Tester progressivement les modifications.
+- [ ] Vérifier que le DHCP et les autres services utiles continuent de fonctionner.
 
-L'objectif est de comprendre comment mieux isoler les sous-réseaux tout en conservant les fonctionnalités utiles de l'infrastructure.
+L'objectif est de mieux isoler les sous-réseaux sans empêcher le fonctionnement normal de l'infrastructure.
 
 ## 6. Identification des risques et durcissement
 
@@ -204,7 +213,7 @@ Cette partie sera donc complétée à partir des observations réelles, sans sup
 - [ ] Appliquer les modifications progressivement.
 - [ ] Vérifier le fonctionnement des services après correction.
 
-Chaque modification sera accompagnée d'une explication : problème identifié, correction appliquée et résultat obtenu.
+Chaque modification sera documentée en expliquant le problème identifié, la correction appliquée et le résultat obtenu.
 
 ## 7. Contre-audit et comparaison
 
@@ -251,8 +260,8 @@ Les fichiers seront créés progressivement.
 
 Chaque chapitre présentera :
 
-- Les objectifs.
-- Les notions découvertes.
+- Les objectifs de l'étape.
+- Les notions techniques découvertes.
 - Les manipulations réalisées.
 - Les commandes utilisées et leur rôle.
 - Les résultats observés.
