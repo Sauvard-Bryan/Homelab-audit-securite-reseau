@@ -17,47 +17,50 @@
 
 ## Un projet dans la continuité du premier homelab
 
-Lors de mon [premier projet de virtualisation KVM](https://github.com/Sauvard-Bryan/Homelab-kvm-serveur-dhcp), j'ai construit une petite infrastructure réseau avec un serveur Windows, un poste client et un routeur OPNsense.
+Lors de mon [premier projet de virtualisation KVM](https://github.com/Sauvard-Bryan/Homelab-kvm-serveur-dhcp), j'ai construit une infrastructure réseau virtualisée avec Windows Server, Windows 11 et OPNsense.
 
-J'ai commencé par faire fonctionner un serveur DHCP sur un réseau isolé, avant de faire évoluer l'architecture vers trois sous-réseaux reliés par OPNsense.
+J'ai notamment configuré un serveur DHCP, plusieurs sous-réseaux et le routage entre ces réseaux.
 
-Une fois l'infrastructure fonctionnelle, je me suis demandé si les communications entre les machines étaient correctement contrôlées et quels services étaient réellement accessibles.
+Une fois l'infrastructure fonctionnelle, je me suis posé de nouvelles questions : quels services sont accessibles sur les machines, quelles communications sont autorisées entre les sous-réseaux et comment mieux protéger cette infrastructure ?
 
-C'est le point de départ de ce nouveau projet.
+Ce deuxième projet est consacré à ces questions.
 
-Ce que j'ai déjà découvert :
+### Compétences déjà abordées
 
 - Linux, KVM et Virt-Manager.
-- La création et la configuration de machines virtuelles.
-- Les adresses IP, le DHCP et le routage.
+- Création et configuration de machines virtuelles.
+- Adressage IP, DHCP et routage.
 - Windows Server 2022.
 - OPNsense comme routeur et relais DHCP.
 
-Ce que je souhaite découvrir :
+### Nouvelles compétences à découvrir
 
-- Les ports TCP et UDP et les services réseau.
-- Les outils d'analyse comme Nmap.
-- Le rôle des règles de pare-feu.
-- L'identification des risques de configuration.
-- Les premières méthodes d'audit et de sécurisation.
+- Ports TCP et UDP et services réseau.
+- Utilisation de Nmap.
+- Analyse des communications réseau.
+- Règles de pare-feu OPNsense.
+- Identification des risques de configuration.
+- Méthodes de base d'un audit de sécurité.
 
-Comme pour mon premier homelab, je souhaite avancer progressivement et documenter mes manipulations, les problèmes rencontrés et les résultats obtenus.
+Comme pour mon premier homelab, je souhaite comprendre les manipulations réalisées et documenter les résultats, les difficultés rencontrées et les solutions apportées.
 
 ## Objectif du projet
 
-Réaliser un premier audit de sécurité sur mon propre réseau virtualisé, puis corriger les éventuels problèmes identifiés.
+Réaliser un premier audit de sécurité de mon infrastructure virtualisée, identifier les éventuels problèmes de configuration et améliorer progressivement la protection du réseau.
 
-Le projet se déroulera en trois étapes :
+L'infrastructure ayant déjà été construite et testée dans mon premier projet, je vais m'appuyer sur cet environnement pour établir un **état initial de sa sécurité**.
 
-1. **Analyser le réseau** pour identifier les machines, les ports et les services accessibles.
-2. **Examiner et sécuriser les communications** entre les sous-réseaux, notamment avec les règles de pare-feu d'OPNsense.
-3. **Vérifier les modifications** en reproduisant les tests et en comparant les résultats.
+Le projet suivra trois grandes étapes :
 
-L'objectif est de comprendre comment contrôler les accès à une infrastructure que j'ai déjà appris à faire fonctionner.
+1. **Audit initial :** identifier les ports, les services accessibles et les communications possibles entre les sous-réseaux.
+2. **Analyse et sécurisation :** étudier les résultats, identifier les accès inutiles et adapter les règles de pare-feu.
+3. **Contre-audit :** reproduire les tests pour vérifier les modifications et comparer les résultats.
 
-## 1. Infrastructure de départ
+L'objectif est de découvrir les bases de la sécurité réseau à partir d'une infrastructure que j'ai moi-même construite.
 
-Je repars de l'architecture réalisée dans mon premier homelab.
+## 1. Infrastructure utilisée
+
+Je réutilise l'architecture réalisée dans mon premier homelab.
 
 ### Machines virtuelles
 
@@ -65,7 +68,7 @@ Je repars de l'architecture réalisée dans mon premier homelab.
 |---|---|---|
 | SERVER-DHCP | Windows Server 2022 | Serveur DHCP et DNS |
 | ROUTAGE | OPNsense | Routeur et relais DHCP |
-| COMPTA-DEVICE1 | Windows 11 | Poste client utilisé pour les tests |
+| COMPTA-DEVICE1 | Windows 11 | Poste client |
 
 ### Réseaux configurés
 
@@ -75,50 +78,48 @@ Je repars de l'architecture réalisée dans mon premier homelab.
 | Comptabilité | `192.168.2.0/24` | `192.168.2.1` |
 | Commercial | `192.168.3.0/24` | `192.168.3.1` |
 
-Le serveur Windows conserve son adresse fixe `192.168.1.1`.
+Le serveur Windows possède l'adresse fixe `192.168.1.1`.
 
-OPNsense assure le routage entre les trois réseaux et transmet les demandes DHCP vers le serveur Windows.
+OPNsense assure le routage entre les trois réseaux et le relais DHCP vers le serveur Windows.
 
-Mon PC hôte dispose de 8 Go de RAM. Comme dans le premier projet, je devrai donc tenir compte des ressources disponibles pour réaliser les tests.
+Mon PC hôte dispose de 8 Go de RAM. Cette contrainte sera prise en compte dans le choix des outils et des machines utilisées pour l'audit.
 
-L'utilisation d'une machine dédiée à l'audit, éventuellement sous Kali Linux, sera étudiée lors de la préparation du laboratoire.
+## 2. Audit initial du réseau
 
-## 2. Découverte et analyse du réseau
+La première étape sera consacrée à l'analyse des machines et des services accessibles sur le réseau.
 
-La première étape consistera à vérifier l'infrastructure existante, puis à découvrir comment observer les services accessibles sur les différentes machines.
+Je souhaite notamment découvrir **Nmap**, un outil permettant d'analyser les ports et d'identifier certains services réseau.
 
-Je souhaite notamment apprendre à utiliser **Nmap** pour identifier les ports ouverts et les services réseau.
+Les tests permettront d'étudier :
 
-Je chercherai à déterminer :
+- Les ports et services accessibles sur les différentes machines.
+- Les communications possibles entre les réseaux Serveur, Comptabilité et Commercial.
+- Les accès qui pourraient être inutiles ou présenter un risque.
 
-- Quels services sont accessibles sur le serveur et le poste client.
-- Quelles communications sont possibles entre les trois sous-réseaux.
-- Si certains accès sont inutiles ou présentent des risques.
+Les résultats obtenus constitueront un état initial de la sécurité du réseau, avant toute modification.
 
-Les premiers tests permettront d'établir un état initial du réseau avant toute modification.
+## 3. Analyse et sécurisation
 
-## 3. Audit et sécurisation avec OPNsense
+À partir des résultats de l'audit, je chercherai à comprendre les risques liés aux configurations existantes.
 
-Lors du premier projet, j'ai principalement utilisé OPNsense pour le routage et le relais DHCP.
+Je souhaite notamment approfondir l'utilisation d'OPNsense en tant que pare-feu, après l'avoir utilisé pour le routage et le relais DHCP dans mon premier projet.
 
-Je souhaite maintenant découvrir son fonctionnement en tant que pare-feu.
+L'objectif sera de limiter les communications non nécessaires, tout en conservant l'accès aux services utiles.
 
-L'objectif sera d'examiner les règles existantes, de comprendre les communications qu'elles autorisent et de limiter les accès qui ne sont pas nécessaires.
+Les corrections seront documentées à partir des problèmes réellement identifiés.
 
-Les éventuelles corrections seront appliquées progressivement, en vérifiant que les services utiles continuent de fonctionner.
+## 4. Contre-audit et résultats
 
-## 4. Tests et résultats
+Après les éventuelles modifications, les tests seront reproduits afin de vérifier leur efficacité.
 
-Après les modifications, je reproduirai les tests initiaux pour vérifier les résultats.
-
-| Élément contrôlé | Avant | Après |
+| Élément contrôlé | Avant sécurisation | Après sécurisation |
 |---|---|---|
-| Ports et services accessibles | À vérifier | À vérifier |
+| Ports et services accessibles | À mesurer | À mesurer |
 | Communications entre sous-réseaux | À tester | À tester |
 | Règles de pare-feu | À analyser | À vérifier |
 | Fonctionnement des services utiles | À vérifier | À vérifier |
 
-Ce tableau sera complété avec les résultats réellement obtenus.
+Ce tableau sera complété avec les résultats réels des tests.
 
 ## 5. Documentation du projet
 
@@ -126,14 +127,16 @@ Comme pour mon premier homelab, les manipulations seront documentées dans des c
 
 | Chapitre | Contenu |
 |---|---|
-| 01 - Préparation du laboratoire | Vérification de l'infrastructure et préparation des outils |
-| 02 - Découverte avec Nmap | Analyse des machines, ports et services |
-| 03 - Analyse des communications | Tests entre les différents sous-réseaux |
-| 04 - Pare-feu OPNsense | Étude des règles et sécurisation des accès |
+| 01 - Audit initial du réseau | Préparation des outils et découverte des ports et services avec Nmap |
+| 02 - Analyse des communications | Tests entre les différents sous-réseaux |
+| 03 - Analyse des risques | Étude des résultats et identification des configurations à améliorer |
+| 04 - Sécurisation avec OPNsense | Analyse et modification des règles de pare-feu |
 | 05 - Contre-audit | Nouveaux tests et comparaison des résultats |
 | 06 - Bilan | Difficultés rencontrées et compétences découvertes |
 
-Chaque chapitre présentera les manipulations réalisées, les commandes utilisées, les problèmes rencontrés et les résultats obtenus, avec des captures d'écran lorsque cela sera pertinent.
+Chaque chapitre présentera les manipulations réalisées, les commandes utilisées, les résultats observés et les problèmes rencontrés.
+
+Les fichiers seront ajoutés progressivement à mesure que le projet avance.
 
 ## 6. État du projet
 
@@ -141,25 +144,34 @@ Chaque chapitre présentera les manipulations réalisées, les commandes utilis�
 
 - [x] Définition du sujet et des objectifs
 - [x] Choix de réutiliser le premier homelab
-- [ ] Vérification de l'infrastructure
-- [ ] Préparation des outils d'analyse
+- [x] Confirmation de la présence des VM et des réseaux virtuels
+- [x] Vérification des adresses des interfaces OPNsense
+- [ ] Choix et préparation des outils d'audit
 - [ ] Premiers tests avec Nmap
 - [ ] Identification des ports et services accessibles
 - [ ] Analyse des communications entre sous-réseaux
-- [ ] Étude des règles de pare-feu OPNsense
-- [ ] Correction des éventuels problèmes identifiés
-- [ ] Réalisation d'un contre-audit
-- [ ] Documentation des résultats sur GitHub
+- [ ] Analyse des risques et des règles OPNsense
+- [ ] Application des éventuelles corrections
+- [ ] Réalisation du contre-audit
+- [ ] Documentation des résultats
 - [ ] Rédaction du bilan final
 
-**Statut : projet en préparation.**
+**Statut : projet en cours.**
 
 ## 7. Bilan
 
 Cette section sera complétée à la fin du projet.
 
-Je souhaite notamment revenir sur les outils découverts, les difficultés rencontrées, les problèmes identifiés et les corrections réalisées.
+Je souhaite notamment revenir sur les outils découverts, les risques réellement identifiés, les difficultés rencontrées et les corrections apportées.
 
-Ce projet doit me permettre de passer de la création d'une infrastructure réseau à une première compréhension de sa sécurité.
+L'objectif de ce projet est de poursuivre mon apprentissage des systèmes et réseaux en découvrant comment analyser et améliorer la sécurité d'une infrastructure existante.
 
-Tous les tests seront réalisés exclusivement sur les machines et les réseaux de mon propre laboratoire, dans un cadre pédagogique.
+Les tests seront réalisés uniquement sur les machines et les réseaux de mon propre laboratoire.
+
+## 8. Projet précédent
+
+Ce projet fait suite à :
+
+[Lab de virtualisation KVM : serveur DHCP et poste comptabilité](https://github.com/Sauvard-Bryan/Homelab-kvm-serveur-dhcp)
+
+Le premier projet était consacré à la construction et au fonctionnement du réseau. Celui-ci est consacré à son audit et à sa sécurisation.
