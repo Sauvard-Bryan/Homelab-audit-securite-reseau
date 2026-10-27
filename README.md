@@ -12,6 +12,9 @@
 
 <sub>Échelle : Niveau 1 — Découverte / Apprentissage · Niveau 2 — Pratique · Niveau 3 — Débutant · Niveau 4 — Intermédiaire · Niveau 5 — Expert</sub>
 
+**Statut :** Projet en cours  
+**Dernière mise à jour :** 27/10/2026
+
 ## Un projet dans la continuité du premier homelab
 
 Lors de mon [premier projet de virtualisation KVM](https://github.com/Sauvard-Bryan/Homelab-kvm-serveur-dhcp), j'ai construit une petite infrastructure réseau avec un serveur Windows, un poste client et un routeur OPNsense.
