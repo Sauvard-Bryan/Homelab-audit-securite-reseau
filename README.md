@@ -1,8 +1,6 @@
 
 # Lab de sécurité réseau : audit et sécurisation d'une infrastructure virtualisée
 
-## Compétences techniques
-
 ![Linux](https://img.shields.io/badge/Linux-Niveau%202%20%7C%20Pratique-16A34A)
 ![Virtualisation KVM](https://img.shields.io/badge/Virtualisation%20KVM-Niveau%202%20%7C%20Pratique-16A34A)
 ![Réseaux IP](https://img.shields.io/badge/Réseaux%20IP-Niveau%202%20%7C%20Pratique-16A34A)
